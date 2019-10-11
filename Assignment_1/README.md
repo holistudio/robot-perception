@@ -17,15 +17,19 @@ Then I used opencv/numpy/PIL/matplotlib python libraries to "do the same thing w
 
 <img src="img/Task2_Image.jpg" width="500"/>
 
-Vanishing points and the principal point were both found using Adobe Illustrator, which reports pixel locations of line intersections and allows for rotating lines 90 degrees.  
+The above image (4032px by 3024px) was used for task 2. Vanishing points and the principal point were both found using Adobe Illustrator, which reports pixel locations of line intersections and allows for rotating lines 90 degrees.  
 
 3D parallel lines were drawn (cyan, magenta, yellow lines) and intersection coordinates recorded for each of the 3 vanishing points. The principal point was found (green lines), knowing the orthocenter of the triangle formed by the 3 vanishing points would be the principal point of the image.
 
 <img src="img/Task2_VanishingPointsCoordinates.png" width="500"/>
 
+Of note is the fact that the principal point (1965, 1488) is (very) roughly equal to the center of the image (2016, 1512).
+
 These coordinates were then fed into the focal length formula derived in class for three vanishing points (see task_2/task_2.py code).
 
-<img src="img\focal_length_formula.png" width="500"/>
+<img src="img\focal_length_formula.png" width="400"/>
+
+where vanishing points are (u1, v1) and (u2, v2) and the principal point is (x0, y0).
 
 Output from the code provides the final calibration matrix. It also confirms the derivation since the focal length is the same regardless of which pairs of vanishing points is used.
 
