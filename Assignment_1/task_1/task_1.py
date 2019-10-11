@@ -4,13 +4,10 @@ import matplotlib as mpl
 from numpy import linalg as LA
 from matplotlib import pyplot as plt
 from PIL import Image
-import os
 
 
 def main():
-    currentDir=os.getcwd();
-
-    img = cv.imread('data/for_watson.png',0);
+    img = cv.imread('../data/for_watson.png',0);
 
     # display image in grayscale
     # cv.imshow('image',img);
