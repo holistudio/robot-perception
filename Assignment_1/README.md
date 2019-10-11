@@ -23,7 +23,9 @@ Vanishing points and the principal point were both found using Adobe Illustrator
 
 <img src="img/Task2_VanishingPointsCoordinates.png" width="500"/>
 
-These coordinates were then fed into the focal length formula derived in class for three vanishing points (see task_2/task_2.py code)
+These coordinates were then fed into the focal length formula derived in class for three vanishing points (see task_2/task_2.py code).
+
+<img src="img\focal_length_formula.png" width="500"/>
 
 Output from the code provides the final calibration matrix. It also confirms the derivation since the focal length is the same regardless of which pairs of vanishing points is used.
 
