@@ -7,7 +7,7 @@ class Point:
         self.y = y
 
 def main():
-    # array of vanishing point coordinates
+    # array of vanishing point coordinates (from img/Task2_VanishingPointsCoordinates.png)
     v = [Point(1911.622,-2888.174), Point(6577.018,3963.804), Point(-1821.64,4067.708)];
 
     # center point coordinates
