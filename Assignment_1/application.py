@@ -1,47 +1,35 @@
 import numpy as np
-import cv2 as cv
-import matplotlib as mpl
-from numpy import linalg as LA
-from matplotlib import pyplot as plt
-from PIL import Image
-import os
+from math import sqrt
 
+class Point:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
 
 def main():
-    currentDir=os.getcwd();
+    # array of vanishing point coordinates
+    v = [Point(1911.622,-2888.174), Point(6577.018,3963.804), Point(-1821.64,4067.708)];
 
-    img = cv.imread('data/for_watson.png',0);
+    # center point coordinates
+    c = Point(1965.774,1488.922);
 
-    # display image in grayscale
-    # cv.imshow('image',img);
-    # cv.waitKey(0);
-    # cv.destroyAllWindows();
+    # based on derivations for focal length:
+    f1 = sqrt(-(v[0].x-c.x)*(v[1].x-c.x)-(v[0].y-c.y)*(v[1].y-c.y));
+    print(f"Focal Length, f= {f1} (points 1 and 2)");
 
-    # seeing the image in grayscale, a very faint message appears!
+    # use the other two pairs of vanishing points to calculate focal length
+    f2 = sqrt(-(v[1].x-c.x)*(v[2].x-c.x)-(v[1].y-c.y)*(v[2].y-c.y));
+    f3 = sqrt(-(v[0].x-c.x)*(v[2].x-c.x)-(v[0].y-c.y)*(v[2].y-c.y));
 
-    # convert pixels to array
-    pixels = np.array(img);
+    # as expected the three pairs yield the same value
+    print(f"Focal Length, f= {f2} (points 2 and 3)");
+    print(f"Focal Length, f= {f3} (points 1 and 3)");
 
-    # plot pixels and record rows where message appears
-    # plt.imshow(pixels, cmap='gray', vmin=0, vmax=255);
-    # plt.show()
+    #final calibration method.
+    K = np.matrix([[f1, 0, c.x],[0, f1, c.y],[0, 0, 1]]);
 
-    # check rows 75, 250, and 390
-    # print(pixels[75,:]); #background is 29, message is 30
-    # print(pixels[240,:]); #background is 149, message is 150
-    # print(pixels[390,:]); #background is 76, message is 77
+    print(f"\nCalibration Matrix:\n{K}")
 
-    # change pixels to black and white based on color values from rows
-    for i in range(0,len(pixels)):
-        for j in range(0,len(pixels[i,:])):
-            if (pixels[i,j] == 29 or pixels[i,j] == 149 or pixels[i,j] == 76):
-                pixels[i,j]=0;
-            if (pixels[i,j] == 30 or pixels[i,j] == 150 or pixels[i,j] == 77):
-                pixels[i,j]=255;
-
-    # plot new image
-    plt.imshow(pixels, cmap='gray', vmin=0, vmax=255);
-    plt.show();
 
 if __name__ == "__main__":
     main()
