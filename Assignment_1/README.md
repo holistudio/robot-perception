@@ -43,3 +43,18 @@ Calibration Matrix:
  [0.00000000e+00 3.32903953e+03 1.48892200e+03]
  [0.00000000e+00 0.00000000e+00 1.00000000e+00]]
 ```
+
+## Task 3
+Tasks 3 and 4 make use of pyAprilTag, which seems to only be usable in Anaconda prompt with the following conda environment setup:
+
+```
+conda create --name opencv_py37 python=3.7 numpy matplotlib cython
+conda activate opencv_py37
+conda install -c conda-forge opencv=3.4.7
+```
+
+Once the above environment is activated, the directory can be changed back to this assignment's within Anaconda Prompt.
+
+
+# References
+https://github.com/ai4ce/pyAprilTag
