@@ -23,7 +23,7 @@ def main():
     # plt.imshow(pixels, cmap='gray', vmin=0, vmax=255);
     # plt.show()
 
-    # check rows 75, 250, and 390
+    # check rows 75, 240, and 390
     # print(pixels[75,:]); #background is 29, message is 30
     # print(pixels[240,:]); #background is 149, message is 150
     # print(pixels[390,:]); #background is 76, message is 77
