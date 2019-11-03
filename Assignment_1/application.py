@@ -56,10 +56,12 @@ def display_plane_points(trial, point_cloud):
 
     # Add an axes
     ax = fig.add_subplot(111,projection='3d')
-    #149 azimuth 11 elevation
+
+    #set view angle
+    ax.view_init(elev= 18, azim=149);
 
     # plot the surface
-    ax.plot_surface(xx, yy, z, alpha=0.2)
+    ax.plot_surface(xx, yy, z, color=[0,0,0], alpha=0.2);
 
     # and plot the point_cloud
     for i in trial.consensus:
@@ -74,12 +76,12 @@ def display_plane_points(trial, point_cloud):
         outlier_points.append(point_cloud[i].tolist());
     outlier_points = np.array(outlier_points);
 
-    print("Displaying Point Cloud and Plane")
-
     ax.scatter(consensus_points[:,0] , consensus_points[:,1] , consensus_points[:,2],  s=0.01, color='green', alpha = 0.1)
     ax.scatter(outlier_points[:,0] , outlier_points[:,1] , outlier_points[:,2],  s=0.01, color='red' , alpha = 0.1)
     ax.scatter(sample_points[:,0] , sample_points[:,1] , sample_points[:,2], s = 100, color='orange', alpha = 1.)
 
+    ax.quiver(trial.plane.point.x, trial.plane.point.y, trial.plane.point.z,
+    trial.plane.n.x, trial.plane.n.y, trial.plane.n.z, length=1, colors=[0,0,0]);
     plt.show();
 
 def fit_points_to_plane_simple(indices, point_cloud):
@@ -248,6 +250,7 @@ def main():
 
     for i in range(0,len(trial_sets)):
         print(f"Trial: {i}, Final Score: {trial_sets[i].score}, Model Plane: {trial_sets[i].plane}\n");
+        display_plane_points(trial_sets[i], points_array);
         if(trial_sets[i].score > max_score):
             max_ind = i;
             max_score = trial_sets[i].score;
