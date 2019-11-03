@@ -56,29 +56,29 @@ def display_plane_points(trial, point_cloud):
 
     # Add an axes
     ax = fig.add_subplot(111,projection='3d')
+    #149 azimuth 11 elevation
 
     # plot the surface
     ax.plot_surface(xx, yy, z, alpha=0.2)
 
     # and plot the point_cloud
-    print("Adding Consensus Points")
     for i in trial.consensus:
         consensus_points.append(point_cloud[i].tolist());
     consensus_points = np.array(consensus_points);
 
-    print("Adding Sample Points")
     for i in trial.sample:
         sample_points.append(point_cloud[i].tolist());
     sample_points = np.array(sample_points);
 
-    print("Adding Outlier Points")
     for i in trial.outliers:
         outlier_points.append(point_cloud[i].tolist());
     outlier_points = np.array(outlier_points);
 
-    ax.scatter(consensus_points[:,0] , consensus_points[:,1] , consensus_points[:,2],  s=0.01, color='green')
-    ax.scatter(sample_points[:,0] , sample_points[:,1] , sample_points[:,2],  s=0.01, color='orange')
-    ax.scatter(outlier_points[:,0] , outlier_points[:,1] , outlier_points[:,2],  s=0.01, color='red')
+    print("Displaying Point Cloud and Plane")
+
+    ax.scatter(consensus_points[:,0] , consensus_points[:,1] , consensus_points[:,2],  s=0.01, color='green', alpha = 0.1)
+    ax.scatter(outlier_points[:,0] , outlier_points[:,1] , outlier_points[:,2],  s=0.01, color='red' , alpha = 0.1)
+    ax.scatter(sample_points[:,0] , sample_points[:,1] , sample_points[:,2], s = 100, color='orange', alpha = 1.)
 
     plt.show();
 
