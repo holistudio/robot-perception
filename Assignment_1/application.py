@@ -82,19 +82,6 @@ def display_plane_points(trial, point_cloud):
 
     plt.show();
 
-def rand_unique_numbers(n, low, high):
-    randoms = [];
-    for i in range(0,n):
-        unique = False;
-        while(unique == False):
-            unique = True;
-            new_num = random.randint(low,high);
-            for j in range(0,len(randoms)):
-                if(randoms[j]==new_num):
-                    unique = False;
-        randoms.append(new_num);
-    return randoms;
-
 def fit_points_to_plane_simple(indices, point_cloud):
     points = [];
     for j in indices:
