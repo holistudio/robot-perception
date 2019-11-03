@@ -14,7 +14,7 @@ class Vector:
     def to_array(self):
         return np.array([self.x, self.y, self.z]);
     def __str__(self):
-        return str(f"[{self.x},{self.y},{self.z}]");
+        return str(f"[{round(self.x,4)},{round(self.y,4)},{round(self.z,4)}]");
 
 class Plane:
     def __init__(self, point, n):
@@ -23,15 +23,26 @@ class Plane:
     def __str__(self):
         return str(f"Plane(Normal: {self.n}, Point: {self.point})");
 
-def display_plane_points(plane, points):
-    # based on the following code: https://stackoverflow.com/questions/36060933/matplotlib-plot-a-plane-and-points-in-3d-simultaneously
+class Trial:
+    def __init__(self, sample, consensus, outliers, score, plane):
+        self.sample = sample;
+        self.consensus = consensus;
+        self.outliers = outliers;
+        self.score = score;
+        self.plane = plane;
 
-    point  = plane.point.to_array();
-    normal = plane.n.to_array();
+def display_plane_points(trial, point_cloud):
+    # based on the following code: https://stackoverflow.com/questions/36060933/matplotlib-plot-a-plane-and-points-in-3d-simultaneously
+    consensus_points = [];
+    sample_points = [];
+    outlier_points = [];
+
+    point  = trial.plane.point.to_array();
+    normal = trial.plane.n.to_array();
 
     # a plane is a*x+b*y+c*z+d=0
     # [a,b,c] is the normal. Thus, we have to calculate
-    # d and we're set
+    # d and we're trial
     d = -point.dot(normal);
 
     # create x,y
@@ -49,8 +60,25 @@ def display_plane_points(plane, points):
     # plot the surface
     ax.plot_surface(xx, yy, z, alpha=0.2)
 
-    # and plot the point
-    ax.scatter(points[:,0] , points[:,1] , points[:,2],  color='green')
+    # and plot the point_cloud
+    print("Adding Consensus Points")
+    for i in trial.consensus:
+        consensus_points.append(point_cloud[i].tolist());
+    consensus_points = np.array(consensus_points);
+
+    print("Adding Sample Points")
+    for i in trial.sample:
+        sample_points.append(point_cloud[i].tolist());
+    sample_points = np.array(sample_points);
+
+    print("Adding Outlier Points")
+    for i in trial.outliers:
+        outlier_points.append(point_cloud[i].tolist());
+    outlier_points = np.array(outlier_points);
+
+    ax.scatter(consensus_points[:,0] , consensus_points[:,1] , consensus_points[:,2],  s=0.01, color='green')
+    ax.scatter(sample_points[:,0] , sample_points[:,1] , sample_points[:,2],  s=0.01, color='orange')
+    ax.scatter(outlier_points[:,0] , outlier_points[:,1] , outlier_points[:,2],  s=0.01, color='red')
 
     plt.show();
 
@@ -67,11 +95,14 @@ def rand_unique_numbers(n, low, high):
         randoms.append(new_num);
     return randoms;
 
-def fit_points_to_plane_simple(points):
-    # given array of points (as Vector objects), find plane that best fits those points
+def fit_points_to_plane_simple(indices, point_cloud):
+    points = [];
+    for j in indices:
+        points.append(point_cloud[j]);
 
+    # given array of points (as Vector objects), find plane that best fits those points
     num_points = len(points);
-    print(f"Consensus set size: {num_points}");
+
     centroid = Vector(0,0,0);
     for p in points:
         centroid.x += p[0];
@@ -169,18 +200,20 @@ def main():
     # number of potential models
     N = 3;
 
-    trial_sets = []
+    trial_sets = [];
+
     # for N trials
     for i in range(0,N):
         while(score_m < score_T):
-            # randomly select init_s number of data points and build a plane as the model
-            rand_p_ind = rand_unique_numbers(init_s,0,len(points_array));
             consensus_set = [];
-            for j in rand_p_ind:
-                consensus_set.append(points_array[j]);
+            outliers_set = [];
+            print(len(outliers_set));
+
+            # randomly select init_s number of data points and build a plane as the model
+            sample_points = np.random.choice(len(points_array),init_s, replace=False);
 
             # use Cramer's rule for plane fitting
-            model_plane = fit_points_to_plane_simple(consensus_set);
+            model_plane = fit_points_to_plane_simple(sample_points, points_array);
             print(f"Simple Plane: {model_plane}");
 
             # use SVD to fit plane (same results as above but at greater memory cost for large number of points)
@@ -189,8 +222,9 @@ def main():
 
             # determine data points within distance threshold, t, of model
             for j in range(0,len(points_array)):
-                if(rand_p_ind.count(j) == 0):
-                    test_point = np.array([points_array[j][0],points_array[j][1],points_array[j][2]]);
+                # if index isn't one of the sample points' indices
+                if(sample_points.tolist().count(j) == 0):
+                    test_point = np.array(points_array[j]);
 
                     # calculate orthogonal distance between point and plane
                     plane_p = np.array([model_plane.point.x, model_plane.point.y, model_plane.point.z]);
@@ -198,38 +232,48 @@ def main():
                     orth_dist = np.dot((test_point - plane_p),normal);
                     # print(f"Distance: {orth_dist}");
 
-                    if(abs(orth_dist)<dist_t):
-                        consensus_set.append(test_point);
+                    if(abs(orth_dist) < dist_t):
+                        consensus_set.append(j);
+                    else:
+                        outliers_set.append(j);
 
-                # assign number of data points as consensus score of that model
-                score_m = len(consensus_set);
+            # assign number of data points as consensus score of that model
+            score_m = len(consensus_set);
             print(f"Trial: {i}, Score: {score_m}");
             print(f"Trial Done?: {score_m >= score_T}\n");
             print(f"---\n");
-            # if model score is less than score threshold, T
+            # if model score is less than score threshold, score_T
             # repeat this process
 
         # store plane model and its consensus score
-        trial_sets.append([consensus_set,score_m]);
+        # print(f"Trial Sample: {sample_points}")
+        trial_sets.append(Trial(sample_points.tolist(),consensus_set,outliers_set,score_m,model_plane));
         print(f"Trial: {i}, Final Score: {score_m}\n");
         print(f"---\n");
         score_m=0;
+
+    print(f"---\n");
+    print(f"Final Results\n");
 
     # display plane with the highest consensus score
     max_ind = 0;
     max_score = 0;
 
     for i in range(0,len(trial_sets)):
-        if(trial_sets[i][1]>max_score):
+        print(f"Trial: {i}, Final Score: {trial_sets[i].score}, Model Plane: {trial_sets[i].plane}\n");
+        if(trial_sets[i].score > max_score):
             max_ind = i;
-            max_score = trial_sets[i][1];
-    best_set = trial_sets[max_ind][0];
+            max_score = trial_sets[i].score;
+    print(f"Best Trial: {max_ind}, Final Score: {max_score}");
+    best_set = trial_sets[max_ind];
 
     # build a new plane with the entire consensus set of data points/inliers
-    model_plane = fit_points_to_plane_simple(best_set);
+    final_set = best_set.sample + best_set.consensus;
+    model_plane = fit_points_to_plane_simple(final_set, points_array);
+    best_set.plane = model_plane;
     print(f"Final Plane: {model_plane}");
 
-    display_plane_points(model_plane,points_array);
+    display_plane_points(best_set, points_array);
 
 if __name__ == "__main__":
     main()
