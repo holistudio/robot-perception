@@ -55,7 +55,103 @@ conda install -c conda-forge opencv=3.4.7
 
 Once the above environment is activated, the directory can be changed back to this assignment's within Anaconda Prompt.
 
+## Task 5
 
+Using RANSAC, the best fit plane for the given point cloud data found had the following properties:
+ - Normal: [0.1029,0.8016,0.5889]
+ - Point: [0.022,0.0157,0.8601
+ - Consensus Score: 221668
+
+This was found using the following RANSAC properties:
+ - Number of Trials: 3
+ - Score Threshold: 217586 (80% of total points)
+ - Initial Sample Size: 5 points  
+
+A threshold score of 80% of total points (217586) was found to be best for finding a plane quickly. Any higher threshold took much longer to "converge."
+
+The following are visualizations of the trial results and final plane model result:
+
+TODO: Add images here with description of normal vectors, etc.
+
+Output from Task 5 code can be found below:
+```
+geometry::PointCloud with 271983 points.
+Threshold Score: 217586
+Simple Plane: Plane(Normal: [0.0989,0.7981,0.5943], Point: [0.0235,0.1073,0.7368])
+Trial: 0, Score: 220615
+Trial Done?: True
+
+---
+
+Trial: 0, Final Score: 220615
+
+---
+
+Simple Plane: Plane(Normal: [0.0714,0.8767,0.4757], Point: [-0.037,-0.286,1.1162])
+Trial: 1, Score: 5693
+Trial Done?: False
+
+---
+
+Simple Plane: Plane(Normal: [-0.2922,0.7857,0.5453], Point: [-0.2307,-0.1265,0.9684])
+Trial: 1, Score: 18319
+Trial Done?: False
+
+---
+
+Simple Plane: Plane(Normal: [0.1011,0.8027,0.5877], Point: [-0.1043,-0.0138,0.9226])
+Trial: 1, Score: 221668
+Trial Done?: True
+
+---
+
+Trial: 1, Final Score: 221668
+
+---
+
+Simple Plane: Plane(Normal: [0.1554,0.7795,0.6068], Point: [0.004,-0.0795,0.9766])
+Trial: 2, Score: 99349
+Trial Done?: False
+
+---
+
+Simple Plane: Plane(Normal: [0.0945,0.7849,0.6123], Point: [0.0906,-0.1731,1.0934])
+Trial: 2, Score: 186135
+Trial Done?: False
+
+---
+
+Simple Plane: Plane(Normal: [0.1026,0.7974,0.5947], Point: [0.0256,0.0904,0.7564])
+Trial: 2, Score: 217380
+Trial Done?: False
+
+---
+
+Simple Plane: Plane(Normal: [-0.1579,0.7737,0.6136], Point: [0.0239,-0.0472,0.8572])
+Trial: 2, Score: 27537
+Trial Done?: False
+
+---
+
+Simple Plane: Plane(Normal: [0.1069,0.8028,0.5866], Point: [0.1012,-0.0433,0.9274])
+Trial: 2, Score: 221111
+Trial Done?: True
+
+---
+
+Trial: 2, Final Score: 221111
+
+---
+
+Final Results
+
+Trial: 0, Final Score: 220615, Model Plane: Plane(Normal: [0.0989,0.7981,0.5943], Point: [0.0235,0.1073,0.7368])
+Trial: 1, Final Score: 221668, Model Plane: Plane(Normal: [0.1011,0.8027,0.5877], Point: [-0.1043,-0.0138,0.9226])
+Trial: 2, Final Score: 221111, Model Plane: Plane(Normal: [0.1069,0.8028,0.5866], Point: [0.1012,-0.0433,0.9274])
+
+Best Trial: 1, Final Score: 221668
+Final Plane: Plane(Normal: [0.1029,0.8016,0.5889], Point: [0.022,0.0157,0.8601])
+```
 # References
 https://github.com/ai4ce/pyAprilTag
 https://github.com/heremaps/pptk
