@@ -198,7 +198,7 @@ def main():
     init_s = 5;
 
     # number of potential models
-    N = 3;
+    N = 1;
 
     trial_sets = [];
 
