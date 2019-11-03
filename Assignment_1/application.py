@@ -29,6 +29,51 @@ def rand_unique_numbers(n, low, high):
         randoms.append(new_num);
     return randoms;
 
+def fit_points_to_plane_simple(points):
+    # given array of points (as Vector objects), find plane that best fits those points
+
+    num_points = len(points);
+    print(f"Consensus set size: {num_points}");
+    centroid = Vector(0,0,0);
+    for p in points:
+        centroid.x += p[0];
+        centroid.y += p[1];
+        centroid.z += p[2];
+    centroid = Vector(centroid.x/num_points,centroid.y/num_points,centroid.z/num_points);
+
+    # code based on https://www.ilikebigbits.com/2015_03_04_plane_from_points.html
+    # and https://www.ilikebigbits.com/2017_09_25_plane_from_points_2.html
+    xx = 0.0;
+    xy = 0.0;
+    xz = 0.0;
+    yy = 0.0;
+    yz = 0.0;
+    zz = 0.0;
+
+    for p in points:
+        r = [p[0] - centroid.x, p[1] - centroid.y, p[2] - centroid.z];
+        xx += r[0] * r[0];
+        xy += r[0] * r[1];
+        xz += r[0] * r[2];
+        yy += r[1] * r[1];
+        yz += r[1] * r[2];
+        zz += r[2] * r[2];
+
+    det_x = yy*zz - yz*yz;
+    det_y = xx*zz - xz*xz;
+    det_z = xx*yy - xy*xy;
+    det_max = max([det_x, det_y, det_z]);
+
+    if det_max == det_x:
+        dir = [det_x, xz*yz - xy*zz, xy*yz - xz*yy];
+    elif det_max == det_y:
+        dir = [xz*yz - xy*zz, det_y, xy*xz - yz*xx];
+    else:
+        dir = [xy*yz - xz*yy, xy*xz - yz*xx, det_z];
+
+    dir = Vector(dir[0],dir[1],dir[2]);
+    return Plane(centroid, dir);
+
 def fit_points_to_plane(points):
     # given array of points (as Vector objects), find plane that best fits those points
 
@@ -56,27 +101,8 @@ def fit_points_to_plane(points):
     # print(f"U:\n{u}\n");
     dir = [u.item((0,2)), u.item((1,2)), u.item((2,2))];
     print(f"Plane Normal Vector:\n{dir}\n");
-    # code based on https://www.ilikebigbits.com/2015_03_04_plane_from_points.html
-    # and https://www.ilikebigbits.com/2017_09_25_plane_from_points_2.html
-    # xx = 0.0;
-    # xy = 0.0;
-    # xz = 0.0;
-    # yy = 0.0;
-    # yz = 0.0;
-    # zz = 0.0;
-    # for p in points:
-    #     r = [p.x - centroid.x, p.y - centroid.y, p.z - centroid.z];
-    #     xx += r[0] * r[0];
-    #     xy += r[0] * r[1];
-    #     xz += r[0] * r[2];
-    #     yy += r[1] * r[1];
-    #     yz += r[1] * r[2];
-    #     zz += r[2] * r[2];
-    #
-    # det_x = yy*zz - yz*yz;
-    # det_y = xx*zz - xz*xz;
-    # det_z = xx*yy - xy*xy;
     dir = Vector(dir[0],dir[1],dir[2]);
+    
     return Plane(centroid, dir);
 
 
