@@ -3,13 +3,16 @@ from numpy import linalg as LA
 from math import sqrt, floor
 import random
 import open3d as o3d
-import pptk
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
 
 class Vector:
     def __init__(self, x, y, z):
         self.x = x;
         self.y = y;
         self.z = z;
+    def to_array(self):
+        return np.array([self.x, self.y, self.z]);
     def __str__(self):
         return str(f"[{self.x},{self.y},{self.z}]");
 
@@ -19,6 +22,37 @@ class Plane:
         self.n = n;
     def __str__(self):
         return str(f"Plane(Normal: {self.n}, Point: {self.point})");
+
+def display_plane_points(plane, points):
+    # based on the following code: https://stackoverflow.com/questions/36060933/matplotlib-plot-a-plane-and-points-in-3d-simultaneously
+
+    point  = plane.point.to_array();
+    normal = plane.n.to_array();
+
+    # a plane is a*x+b*y+c*z+d=0
+    # [a,b,c] is the normal. Thus, we have to calculate
+    # d and we're set
+    d = -point.dot(normal);
+
+    # create x,y
+    xx, yy = np.meshgrid(np.linspace(-1,1,21), np.linspace(-1,1,21));
+
+    # calculate corresponding z
+    z = (-normal[0] * xx - normal[1] * yy - d) * 1. /normal[2];
+
+    # Create the figure
+    fig = plt.figure()
+
+    # Add an axes
+    ax = fig.add_subplot(111,projection='3d')
+
+    # plot the surface
+    ax.plot_surface(xx, yy, z, alpha=0.2)
+
+    # and plot the point
+    ax.scatter(points[:,0] , points[:,1] , points[:,2],  color='green')
+
+    plt.show();
 
 def rand_unique_numbers(n, low, high):
     randoms = [];
@@ -190,10 +224,12 @@ def main():
             max_ind = i;
             max_score = trial_sets[i][1];
     best_set = trial_sets[max_ind][0];
-    pptk.viewer(best_set);
+
     # build a new plane with the entire consensus set of data points/inliers
     model_plane = fit_points_to_plane_simple(best_set);
     print(f"Final Plane: {model_plane}");
+
+    display_plane_points(model_plane,points_array);
 
 if __name__ == "__main__":
     main()
