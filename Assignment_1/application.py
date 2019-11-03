@@ -145,10 +145,13 @@ def main():
             for j in rand_p_ind:
                 consensus_set.append(points_array[j]);
 
+            # use Cramer's rule for plane fitting
             model_plane = fit_points_to_plane_simple(consensus_set);
-            model_plane2 = fit_points_to_plane(consensus_set);
             print(f"Simple Plane: {model_plane}");
-            print(f"SVD Plane: {model_plane2}");
+
+            # use SVD to fit plane (same results as above but at greater memory cost for large number of points)
+            # model_plane2 = fit_points_to_plane(consensus_set);
+            # print(f"SVD Plane: {model_plane2}");
 
             # determine data points within distance threshold, t, of model
             for j in range(0,len(points_array)):
