@@ -10,11 +10,15 @@ class Vector:
         self.x = x;
         self.y = y;
         self.z = z;
+    def __str__(self):
+        return str(f"[{self.x},{self.y},{self.z}]");
 
 class Plane:
     def __init__(self, point, n):
         self.point = point;
         self.n = n;
+    def __str__(self):
+        return str(f"Plane(Normal: {self.n}, Point: {self.point})");
 
 def rand_unique_numbers(n, low, high):
     randoms = [];
@@ -71,6 +75,8 @@ def fit_points_to_plane_simple(points):
     else:
         dir = [xy*yz - xz*yy, xy*xz - yz*xx, det_z];
 
+    dir = dir/LA.norm(dir);
+
     dir = Vector(dir[0],dir[1],dir[2]);
     return Plane(centroid, dir);
 
@@ -102,7 +108,7 @@ def fit_points_to_plane(points):
     dir = [u.item((0,2)), u.item((1,2)), u.item((2,2))];
     print(f"Plane Normal Vector:\n{dir}\n");
     dir = Vector(dir[0],dir[1],dir[2]);
-    
+
     return Plane(centroid, dir);
 
 
@@ -133,13 +139,16 @@ def main():
     # for N trials
     for i in range(0,N):
         while(score_m < score_T):
-            # randomly select init_s data points and build a plane as the model
+            # randomly select init_s number of data points and build a plane as the model
             rand_p_ind = rand_unique_numbers(init_s,0,len(points_array));
             consensus_set = [];
             for j in rand_p_ind:
                 consensus_set.append(points_array[j]);
 
-            model_plane = fit_points_to_plane(consensus_set);
+            model_plane = fit_points_to_plane_simple(consensus_set);
+            model_plane2 = fit_points_to_plane(consensus_set);
+            print(f"Simple Plane: {model_plane}");
+            print(f"SVD Plane: {model_plane2}");
 
             # determine data points within distance threshold, t, of model
             for j in range(0,len(points_array)):
@@ -180,7 +189,8 @@ def main():
     best_set = trial_sets[max_ind][0];
     pptk.viewer(best_set);
     # build a new plane with the entire consensus set of data points/inliers
-    model_plane = fit_points_to_plane(best_set);
+    model_plane = fit_points_to_plane_simple(best_set);
+    print(f"Final Plane: {model_plane}");
 
 if __name__ == "__main__":
     main()
