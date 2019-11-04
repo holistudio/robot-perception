@@ -7,27 +7,27 @@ Noticing the URL in the image on the Assignment pdf, I realized that the message
 I actually first used Photoshop's Channel Mixer, Levels, and Curves to fiddle around with the image's color and contrast settings.
 
 
-<img src="img/for_watson_photoshop.png" width="500"/>
+<img src="img/task_1/for_watson_photoshop.png" width="500"/>
 
 Then I used opencv/numpy/PIL/matplotlib python libraries to "do the same thing with code." Task 1's code is in the task_1 folder. Results are below:
 
-<img src="img/Task1.png" width="500"/>
+<img src="img/task_1/Task1.png" width="500"/>
 
 ## Task 2
 
-<img src="img/Task2_Image.jpg" width="500"/>
+<img src="img/task_2/Task2_Image.jpg" width="500"/>
 
 The above image (4032px by 3024px) was used for task 2. Vanishing points and the principal point were both found using Adobe Illustrator, which reports pixel locations of line intersections and allows for rotating lines 90 degrees.  
 
 3D parallel lines were drawn (cyan, magenta, yellow lines) and intersection coordinates recorded for each of the 3 vanishing points. The principal point was found (green lines), knowing the orthocenter of the triangle formed by the 3 vanishing points would be the principal point of the image.
 
-<img src="img/Task2_VanishingPointsCoordinates.png" width="500"/>
+<img src="img/task_2/Task2_VanishingPointsCoordinates.png" width="500"/>
 
 Of note is the fact that the principal point (1965, 1488) is roughly equal to the center of the image (2016, 1512).
 
 These coordinates were then fed into the focal length formula derived in class for three vanishing points (see task_2/task_2.py code).
 
-<img src="img\focal_length_formula.png" width="400"/>
+<img src="img/task_2/focal_length_formula.png" width="400"/>
 
 where vanishing points are (u1, v1) and (u2, v2) and the principal point is (x0, y0).
 
@@ -48,7 +48,7 @@ Calibration Matrix:
 
 Using the same iPhone, I took a photo of the AprilTag calibration image:
 
-<img src="task_3\Task3_00.png" width="250"/> <img src="task_3\calib_00.png" width="250"/>
+<img src="img/task_3/Task3_00.png" width="250"/> <img src="img/task_3/calib_00.png" width="250"/>
 
 and obtained the following calibration matrix:
 ```
@@ -63,7 +63,7 @@ camera distortion parameters:
 
 Pretty close to what I got by hand in Task 2! Of course I didn't get any distortion parameters. Noticing that one of the AprilTags wasn't recognized in the above image, I took a second one and reran the demo_calib_by_photo script:
 
-<img src="task_3\Task3_01.png" width="250"/> <img src="task_3\calib_01.png" width="250"/>
+<img src="img/task_3/Task3_01.png" width="250"/> <img src="img/task_3/calib_01.png" width="250"/>
 
 ```
 camera intrinsic matrix:
