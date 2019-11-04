@@ -23,7 +23,7 @@ The above image (4032px by 3024px) was used for task 2. Vanishing points and the
 
 <img src="img/Task2_VanishingPointsCoordinates.png" width="500"/>
 
-Of note is the fact that the principal point (1965, 1488) is (very) roughly equal to the center of the image (2016, 1512).
+Of note is the fact that the principal point (1965, 1488) is roughly equal to the center of the image (2016, 1512).
 
 These coordinates were then fed into the focal length formula derived in class for three vanishing points (see task_2/task_2.py code).
 
@@ -74,6 +74,12 @@ camera distortion parameters:
 [ 2.39702854e-01 -1.11168603e+00  7.30426899e-04  4.52920808e-04
   0.00000000e+00]
 ```
+
+The results are slightly different from the first calibration image. The second calibration may be the most accurate, since the estimated principal point is closer to the center of the image (2016px, 1512px). I also highly suspect differences may result from the iPhone's autofocus, which would vary the focal length between images outside of my own control. I purposely tried to stand farther back in the second calibration image, hoping to get something closer to my own image in Task 2 where I also stood far away from the object.
+
+Moreover, I think discrepancies result from my hand drawn lines and vanishing points in Task 2. While it's sort of "comforting" to do things yourself step by step, I also think doing things by hand may be more susceptible to errors. Though I use Illustrator software, my results in Task 2 may be very sensitive to where I visually estimate the 3D parallel lines to be, subsequently propagating error into vanishing point coordinates and calibration calculations.
+
+
 ## Task 5
 
 Using RANSAC, the best fit plane for the given point cloud data found had the following properties:
