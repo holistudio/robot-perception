@@ -45,16 +45,35 @@ Calibration Matrix:
 ```
 
 ## Task 3
-Tasks 3 and 4 make use of pyAprilTag, which seems to only be usable in Anaconda prompt with the following conda environment setup:
+
+Using the same iPhone, I took a photo of the AprilTag calibration image:
+
+<img src="task_3\Task3_00.png" width="250"/> <img src="task_3\calib_00.png" width="250"/>
+
+and obtained the following calibration matrix:
+```
+camera intrinsic matrix:
+[[3.21246201e+03 0.00000000e+00 2.03445914e+03]
+ [0.00000000e+00 3.21364362e+03 1.47598821e+03]
+ [0.00000000e+00 0.00000000e+00 1.00000000e+00]]
+camera distortion parameters:
+[ 2.59008451e-01 -1.46912312e+00 -1.75916904e-03  1.17038348e-03
+  0.00000000e+00]
+```
+
+Pretty close to what I got by hand in Task 2! Of course I didn't get any distortion parameters. Noticing that one of the AprilTags wasn't recognized in the above image, I took a second one and reran the demo_calib_by_photo script:
+
+<img src="task_3\Task3_01.png" width="250"/> <img src="task_3\calib_01.png" width="250"/>
 
 ```
-conda create --name opencv_py37 python=3.7 numpy matplotlib cython
-conda activate opencv_py37
-conda install -c conda-forge opencv=3.4.7
+camera intrinsic matrix:
+[[3.14072514e+03 0.00000000e+00 2.01964606e+03]
+ [0.00000000e+00 3.14336567e+03 1.48452385e+03]
+ [0.00000000e+00 0.00000000e+00 1.00000000e+00]]
+camera distortion parameters:
+[ 2.39702854e-01 -1.11168603e+00  7.30426899e-04  4.52920808e-04
+  0.00000000e+00]
 ```
-
-Once the above environment is activated, the directory can be changed back to this assignment's within Anaconda Prompt.
-
 ## Task 5
 
 Using RANSAC, the best fit plane for the given point cloud data found had the following properties:
@@ -154,4 +173,15 @@ Final Plane: Plane(Normal: [0.1029,0.8016,0.5889], Point: [0.022,0.0157,0.8601])
 ```
 # References
 https://github.com/ai4ce/pyAprilTag
+
+Tasks 3 and 4 make use of pyAprilTag, which seems to only be usable in Anaconda prompt with the following conda environment setup:
+
+```
+conda create --name opencv_py37 python=3.7 numpy matplotlib cython
+conda activate opencv_py37
+conda install -c conda-forge opencv=3.4.7
+```
+
+Once the above environment is activated, the directory can be changed back to this assignment's within Anaconda Prompt.
+
 https://github.com/heremaps/pptk
