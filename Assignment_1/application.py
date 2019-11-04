@@ -1,267 +1,74 @@
 import numpy as np
 from numpy import linalg as LA
+
 from math import sqrt, floor
 import random
-import open3d as o3d
+
 import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
+from PIL import Image
 
-class Vector:
-    def __init__(self, x, y, z):
-        self.x = x;
-        self.y = y;
-        self.z = z;
-    def to_array(self):
-        return np.array([self.x, self.y, self.z]);
-    def __str__(self):
-        return str(f"[{round(self.x,4)},{round(self.y,4)},{round(self.z,4)}]");
+import cv2
+import pyAprilTag
 
-class Plane:
-    def __init__(self, point, n):
-        self.point = point;
-        self.n = n;
-    def __str__(self):
-        return str(f"Plane(Normal: {self.n}, Point: {self.point})");
+# Calibration Matrix from Task 3
+# AprilCalib log 2
+# CalibRig::mode=2d
+# @ Sun Nov  3 21:18:57 2019
 
-class Trial:
-    def __init__(self, sample, consensus, outliers, score, plane):
-        self.sample = sample;
-        self.consensus = consensus;
-        self.outliers = outliers;
-        self.score = score;
-        self.plane = plane;
-
-def display_plane_points(trial, point_cloud):
-    # based on the following code: https://stackoverflow.com/questions/36060933/matplotlib-plot-a-plane-and-points-in-3d-simultaneously
-    consensus_points = [];
-    sample_points = [];
-    outlier_points = [];
-
-    point  = trial.plane.point.to_array();
-    normal = trial.plane.n.to_array();
-
-    # a plane is a*x+b*y+c*z+d=0
-    # [a,b,c] is the normal. Thus, we have to calculate
-    # d and we're trial
-    d = -point.dot(normal);
-
-    # create x,y
-    xx, yy = np.meshgrid(np.linspace(-1,1,21), np.linspace(-1,1,21));
-
-    # calculate corresponding z
-    z = (-normal[0] * xx - normal[1] * yy - d) * 1. /normal[2];
-
-    # Create the figure
-    fig = plt.figure()
-
-    # Add an axes
-    ax = fig.add_subplot(111,projection='3d')
-
-    #set view angle
-    ax.view_init(elev= 18, azim=149);
-
-    # plot the surface
-    ax.plot_surface(xx, yy, z, color=[0,0,0], alpha=0.2);
-
-    # and plot the point_cloud
-    for i in trial.consensus:
-        consensus_points.append(point_cloud[i].tolist());
-    consensus_points = np.array(consensus_points);
-
-    for i in trial.sample:
-        sample_points.append(point_cloud[i].tolist());
-    sample_points = np.array(sample_points);
-
-    for i in trial.outliers:
-        outlier_points.append(point_cloud[i].tolist());
-    outlier_points = np.array(outlier_points);
-
-    ax.scatter(consensus_points[:,0] , consensus_points[:,1] , consensus_points[:,2],  s=0.01, color='green', alpha = 0.025)
-    ax.scatter(outlier_points[:,0] , outlier_points[:,1] , outlier_points[:,2],  s=0.01, color='red' , alpha = 0.1)
-    ax.scatter(sample_points[:,0] , sample_points[:,1] , sample_points[:,2], s = 100, color='orange', alpha = 1.)
-
-    ax.quiver(trial.plane.point.x, trial.plane.point.y, trial.plane.point.z,
-    trial.plane.n.x, trial.plane.n.y, trial.plane.n.z, length=1, colors=[0,0,0]);
-    plt.show();
-
-def fit_points_to_plane_simple(indices, point_cloud):
-    points = [];
-    for j in indices:
-        points.append(point_cloud[j]);
-
-    # given array of points (as Vector objects), find plane that best fits those points
-    num_points = len(points);
-
-    centroid = Vector(0,0,0);
-    for p in points:
-        centroid.x += p[0];
-        centroid.y += p[1];
-        centroid.z += p[2];
-    centroid = Vector(centroid.x/num_points,centroid.y/num_points,centroid.z/num_points);
-
-    # code based on https://www.ilikebigbits.com/2015_03_04_plane_from_points.html
-    # and https://www.ilikebigbits.com/2017_09_25_plane_from_points_2.html
-    xx = 0.0;
-    xy = 0.0;
-    xz = 0.0;
-    yy = 0.0;
-    yz = 0.0;
-    zz = 0.0;
-
-    for p in points:
-        r = [p[0] - centroid.x, p[1] - centroid.y, p[2] - centroid.z];
-        xx += r[0] * r[0];
-        xy += r[0] * r[1];
-        xz += r[0] * r[2];
-        yy += r[1] * r[1];
-        yz += r[1] * r[2];
-        zz += r[2] * r[2];
-
-    det_x = yy*zz - yz*yz;
-    det_y = xx*zz - xz*xz;
-    det_z = xx*yy - xy*xy;
-    det_max = max([det_x, det_y, det_z]);
-
-    if det_max == det_x:
-        dir = [det_x, xz*yz - xy*zz, xy*yz - xz*yy];
-    elif det_max == det_y:
-        dir = [xz*yz - xy*zz, det_y, xy*xz - yz*xx];
-    else:
-        dir = [xy*yz - xz*yy, xy*xz - yz*xx, det_z];
-
-    dir = dir/LA.norm(dir);
-
-    dir = Vector(dir[0],dir[1],dir[2]);
-    return Plane(centroid, dir);
-
-def fit_points_to_plane(points):
-    # given array of points (as Vector objects), find plane that best fits those points
-
-    num_points = len(points);
-    print(f"Consensus set size: {num_points}");
-    centroid = Vector(0,0,0);
-    for p in points:
-        centroid.x += p[0];
-        centroid.y += p[1];
-        centroid.z += p[2];
-    centroid = Vector(centroid.x/num_points,centroid.y/num_points,centroid.z/num_points);
-    centroid_arr = np.array([centroid.x,centroid.y,centroid.z])
-
-    covariance_m = [[0,0,0]];
-    for p in points:
-        r = p - centroid_arr;
-        covariance_m = np.append(covariance_m,[r],axis=0);
-    covariance_m = np.delete(covariance_m, 0, 0);
-    covariance_m = covariance_m.transpose();
-    # print(f"Covariance Matrix:\n{covariance_m}\n");
-
-    u, s, vh = np.linalg.svd(covariance_m, full_matrices=True);
-
-    # print(f"Singular Values:\n{s}\n");
-    # print(f"U:\n{u}\n");
-    dir = [u.item((0,2)), u.item((1,2)), u.item((2,2))];
-    print(f"Plane Normal Vector:\n{dir}\n");
-    dir = Vector(dir[0],dir[1],dir[2]);
-
-    return Plane(centroid, dir);
-
+from numpy import array
+U=array([[2816.438720703125, 2597.07568359375, 2375.109375, 2150.498779296875, 1207.137329101563, 1451.309326171875, 1689.761840820313, 1922.474609375, 2826.8193359375, 2606.09033203125, 2383.040771484375, 2157.81494140625, 1929.438232421875, 1696.225219726563, 1211.032348632813, 1456.765258789063, 2837.992431640625, 2616.05712890625, 2391.7802734375, 2165.52978515625, 1936.2373046875, 1702.047973632813, 1461.433959960938, 1214.276000976563, 2850.055419921875, 2627.13134765625, 2401.544677734375, 2173.796630859375, 1942.871337890625, 1707.0791015625, 1465.036499023438, 1216.729858398438, 2862.66552734375, 2639.017333984375, 2412.223388671875, 2182.541015625, 1949.46923828125, 1711.550415039063, 1467.962036132813, 1218.658813476563],
+       [1035.465942382813, 1037.578735351563, 1039.794677734375, 1041.74609375, 1042.689453125, 1042.848876953125, 1043.1025390625, 1042.859619140625, 1258.50927734375, 1262.191040039063, 1265.981323242188, 1269.592895507813, 1272.755004882813, 1275.471557617188, 1280.3798828125, 1277.887084960938, 1483.570434570313, 1488.48193359375, 1493.434936523438, 1498.455444335938, 1503.635620117188, 1509.08203125, 1514.589599609375, 1520.39111328125, 1711.186889648438, 1717.338500976563, 1723.517333984375, 1730.012817382813, 1737.233642578125, 1745.336547851563, 1754.135986328125, 1763.214965820313, 1941.654907226563, 1949.641235351563, 1957.556396484375, 1965.94482421875, 1975.379760742188, 1986.034423828125, 1997.4892578125, 2009.280639648438]], dtype='float64');
+Xw=array([[1499.504516601563, 1299.504516601563, 1099.504516601563, 899.5044555664063, 99.50446319580078, 299.5044555664063, 499.5044555664063, 699.5044555664063, 1499.504516601563, 1299.504516601563, 1099.504516601563, 899.5044555664063, 699.5044555664063, 499.5044555664063, 99.50446319580078, 299.5044555664063, 1499.504516601563, 1299.504516601563, 1099.504516601563, 899.5044555664063, 699.5044555664063, 499.5044555664063, 299.5044555664063, 99.50446319580078, 1499.504516601563, 1299.504516601563, 1099.504516601563, 899.5044555664063, 699.5044555664063, 499.5044555664063, 299.5044555664063, 99.50446319580078, 1499.504516601563, 1299.504516601563, 1099.504516601563, 899.5044555664063, 699.5044555664063, 499.5044555664063, 299.5044555664063, 99.50446319580078],
+       [99.50446319580078, 99.50446319580078, 99.50446319580078, 99.50446319580078, 99.50446319580078, 99.50446319580078, 99.50446319580078, 99.50446319580078, 299.5044555664063, 299.5044555664063, 299.5044555664063, 299.5044555664063, 299.5044555664063, 299.5044555664063, 299.5044555664063, 299.5044555664063, 499.5044555664063, 499.5044555664063, 499.5044555664063, 499.5044555664063, 499.5044555664063, 499.5044555664063, 499.5044555664063, 499.5044555664063, 699.5044555664063, 699.5044555664063, 699.5044555664063, 699.5044555664063, 699.5044555664063, 699.5044555664063, 699.5044555664063, 699.5044555664063, 899.5044555664063, 899.5044555664063, 899.5044555664063, 899.5044555664063, 899.5044555664063, 899.5044555664063, 899.5044555664063, 899.5044555664063],
+       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]], dtype='float64');
+# After LM:
+K=array([[3140.725141179792, 0, 2019.646055960577],
+       [0, 3143.365672324941, 1484.523845830987],
+       [0, 0, 1]], dtype='float64');
+distCoeffs=array([0.2397028544561952,
+       -1.111686031746706,
+       0.0007304268963748716,
+       0.0004529208082846044,
+       0], dtype='float64');
 
 def main():
-    # load point cloud data points
-    pcd = o3d.io.read_point_cloud("data/record_00348.pcd");
-    print(pcd); #271983
-    points_array = np.asarray(pcd.points);
-    # o3d.visualization.draw_geometries([pcd])
+    image_path = 'img/task_4/Task4_01.png';
+    img = cv2.imread(image_path, 0);
+    ids, corners, centers, Hs = pyAprilTag.find(img);
+
+    H_matrix = np.array(Hs[0]);
+    print(f"H = \n{H_matrix}");
+
+    tag_corners = corners[0];
+    print(f"\nCorner Image Coordinates = \n{tag_corners}\n");
+
+    # corner_0 = tag_corners[0];
+    # corner_0 = np.append(corner_0,1);
+    # corner_0_w = np.matmul(LA.inv(H_matrix),np.array(corner_0))
+    # print(corner_0_w/corner_0_w[2])
+
+    world_coordinates = np.array([[-1, -1, 1],
+    [1, -1, 1],
+    [1, 1, 1],
+    [-1, 1, 1]]);
+
+    image_coordinates = np.matmul(H_matrix, world_coordinates.transpose()).transpose();
+
+    for i in range(0,len(image_coordinates)):
+        image_coordinates[i] = image_coordinates[i] / image_coordinates[i][2];
+    print(image_coordinates)
+
+    im = np.array(Image.open(image_path), dtype=np.uint8);
+    fig,ax = plt.subplots(1);
+
+    # Display the image
+    ax.imshow(im);
+
+    ax.scatter(tag_corners[:,0], tag_corners[:,1], color='red');
+    ax.scatter(image_coordinates[:,0], image_coordinates[:,1], color='green');
+    plt.show();
 
 
-    # set consensus score threshold to 80% of number of data points
-    score_T = floor(0.80*len(points_array));
-    print(f"Threshold Score: {score_T}")
-    # model score
-    score_m = 0;
-
-    # distance threshold for determining inliers/consensus points
-    dist_t = 0.01;
-
-    # initial sample size for building a model
-    init_s = 5;
-
-    # number of potential models
-    N = 3;
-
-    trial_sets = [];
-
-    # for N trials
-    for i in range(0,N):
-        while(score_m < score_T):
-            consensus_set = [];
-            outliers_set = [];
-
-            # randomly select init_s number of data points and build a plane as the model
-            sample_points = np.random.choice(len(points_array),init_s, replace=False);
-
-            # use Cramer's rule for plane fitting
-            model_plane = fit_points_to_plane_simple(sample_points, points_array);
-            print(f"Simple Plane: {model_plane}");
-
-            # use SVD to fit plane (same results as above but at greater memory cost for large number of points)
-            # model_plane2 = fit_points_to_plane(consensus_set);
-            # print(f"SVD Plane: {model_plane2}");
-
-            # determine data points within distance threshold, t, of model
-            for j in range(0,len(points_array)):
-                # if index isn't one of the sample points' indices
-                if(sample_points.tolist().count(j) == 0):
-                    test_point = np.array(points_array[j]);
-
-                    # calculate orthogonal distance between point and plane
-                    plane_p = np.array([model_plane.point.x, model_plane.point.y, model_plane.point.z]);
-                    normal = np.array([model_plane.n.x, model_plane.n.y, model_plane.n.z]);
-                    orth_dist = np.dot((test_point - plane_p),normal);
-                    # print(f"Distance: {orth_dist}");
-
-                    if(abs(orth_dist) < dist_t):
-                        consensus_set.append(j);
-                    else:
-                        outliers_set.append(j);
-
-            # assign number of data points as consensus score of that model
-            score_m = len(consensus_set);
-            print(f"Trial: {i}, Score: {score_m}");
-            print(f"Trial Done?: {score_m >= score_T}\n");
-            print(f"---\n");
-            # if model score is less than score threshold, score_T
-            # repeat this process
-
-        # store plane model and its consensus score
-        # print(f"Trial Sample: {sample_points}")
-        trial_sets.append(Trial(sample_points.tolist(),consensus_set,outliers_set,score_m,model_plane));
-        print(f"Trial: {i}, Final Score: {score_m}\n");
-        print(f"---\n");
-        score_m=0;
-
-    print(f"Final Results\n");
-
-    # display plane with the highest consensus score
-    max_ind = 0;
-    max_score = 0;
-
-    for i in range(0,len(trial_sets)):
-        print(f"Trial: {i}, Final Score: {trial_sets[i].score}, Model Plane: {trial_sets[i].plane}\n");
-        display_plane_points(trial_sets[i], points_array);
-        if(trial_sets[i].score > max_score):
-            max_ind = i;
-            max_score = trial_sets[i].score;
-    print(f"Best Trial: {max_ind}, Final Score: {max_score}");
-    best_set = trial_sets[max_ind];
-
-    # build a new plane with the entire consensus set of data points/inliers
-    final_set = best_set.sample + best_set.consensus;
-    model_plane = fit_points_to_plane_simple(final_set, points_array);
-    best_set.plane = model_plane;
-    print(f"Final Plane: {model_plane}");
-
-    display_plane_points(best_set, points_array);
 
 if __name__ == "__main__":
     main()
