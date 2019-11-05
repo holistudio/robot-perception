@@ -6,6 +6,7 @@ import random
 
 import matplotlib.pyplot as plt
 from PIL import Image
+from matplotlib.lines import Line2D
 
 import cv2
 import pyAprilTag
@@ -13,13 +14,17 @@ import pyAprilTag
 
 def main():
     # Calibration Matrix from Task 3
-    K=np.array([[3.14072514e+03, 0.00000000e+00, 2.01964606e+03],
-     [0.00000000e+00, 3.14336567e+03, 1.48452385e+03],
-     [0.00000000e+00, 0.00000000e+00, 1.00000000e+00]]);
+    K=np.array([[1.17136545e+03, 0.00000000e+00, 8.01203424e+02],
+    [0.00000000e+00, 1.17497866e+03, 5.38637778e+02],
+    [0.00000000e+00, 0.00000000e+00, 1.00000000e+00]], dtype='float64');
+
+    # K=np.array([[3.14072514e+03, 0.00000000e+00, 2.01964606e+03],
+    # [0.00000000e+00, 3.14336567e+03, 1.48452385e+03],
+    # [0.00000000e+00, 0.00000000e+00, 1.00000000e+00]], dtype='float64')*1600/4032;
 
     print(f"\nK = \n{K}\n");
 
-    image_path = 'img/task_4/Task4_02.png';
+    image_path = 'img/task_4/Task4_03.png';
     img = cv2.imread(image_path, 0);
     ids, corners, centers, Hs = pyAprilTag.find(img);
 
@@ -30,16 +35,17 @@ def main():
     print(f"\nCorner Image Coordinates = \n{tag_corners}\n");
 
     A_matrix = np.matmul(LA.inv(K), H_matrix);
+    print(f"\nA = K^-1 * H = \n{A_matrix}\n");
 
     a1_n = LA.norm(A_matrix[:,0])
+    a2_n = LA.norm(A_matrix[:,1])
 
     r1 = A_matrix[:,0];
-    r1 = r1 / a1_n;
-
     r2 = A_matrix[:,1];
-    r2 = r2 / a1_n;
-
     r3 = np.cross(r1,r2);
+
+    r1 = r1 / a1_n;
+    r2 = r2 / a1_n;
     r3 = r3 / (a1_n * a1_n);
 
     tr = A_matrix[:,2];
@@ -60,6 +66,10 @@ def main():
     world_coordinates = np.array([[1, 1, 0, 1],
     [-1, 1, 0, 1],
     [-1, -1, 0, 1],
+    [-1, -1, 1, 1],
+    [-1, 1, 1, 1],
+    [1, 1, 1, 1],
+    [1, -1, 1, 1],
     [1, -1, 0, 1]]);
     print(f"\nWorld Coordinates = \n{world_coordinates}\n");
 
@@ -89,7 +99,34 @@ def main():
     ax.imshow(im);
 
     ax.scatter(tag_corners[:,0], tag_corners[:,1], color='red');
-    ax.scatter(image_coordinates[:,0], image_coordinates[:,1], color='green');
+    # ax.scatter(image_coordinates[:,0], image_coordinates[:,1], color='green');
+
+    for i in range(0,4):
+        for j in range(0,3):
+            x = [];
+            y = [];
+            x.append(image_coordinates[i*2,0]);
+            y.append(image_coordinates[i*2,1]);
+            if j == 0:
+                x.append(image_coordinates[i*2+1,0]);
+                y.append(image_coordinates[i*2+1,1]);
+            elif j == 1:
+                if i*2+5 > len(image_coordinates):
+                    x.append(image_coordinates[i*2-3,0]);
+                    y.append(image_coordinates[i*2-3,1]);
+                else:
+                    x.append(image_coordinates[i*2+5,0]);
+                    y.append(image_coordinates[i*2+5,1]);
+            elif j == 2:
+                if i*2+7 > len(image_coordinates):
+                    x.append(image_coordinates[i*2-1,0]);
+                    y.append(image_coordinates[i*2-1,1]);
+                else:
+                    x.append(image_coordinates[i*2+7,0]);
+                    y.append(image_coordinates[i*2+7,1]);
+            line = Line2D(x, y);
+            ax.add_line(line);
+
     plt.show();
 
 
