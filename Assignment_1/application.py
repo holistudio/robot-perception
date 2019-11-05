@@ -18,9 +18,9 @@ def main():
     [0.00000000e+00, 1.17497866e+03, 5.38637778e+02],
     [0.00000000e+00, 0.00000000e+00, 1.00000000e+00]], dtype='float64');
 
-    # K=np.array([[3.14072514e+03, 0.00000000e+00, 2.01964606e+03],
-    # [0.00000000e+00, 3.14336567e+03, 1.48452385e+03],
-    # [0.00000000e+00, 0.00000000e+00, 1.00000000e+00]], dtype='float64')*1600/4032;
+    K = np.array([[3.14072514e+03*1600/4032, 0.00000000e+00, 2.01964606e+03*1600/4032 ],
+ [0.00000000e+00, 3.14336567e+03*1600/4032,  1.48452385e+03*1600/4032 ],
+ [0.00000000e+00, 0.00000000e+00, 1.00000000e+00]]);
 
     print(f"\nK = \n{K}\n");
 
@@ -65,26 +65,13 @@ def main():
 
     world_coordinates = np.array([[1, 1, 0, 1],
     [-1, 1, 0, 1],
-    [-1, -1, 0, 1],
-    [-1, -1, 1, 1],
-    [-1, 1, 1, 1],
-    [1, 1, 1, 1],
-    [1, -1, 1, 1],
+    [-1, -1, 0, 1], # since our cube "base" is from -1 to 1, its side length is 2
+    [-1, -1, 2, 1], # so z-coordinates should be equal to 2 for it to be a cube!
+    [-1, 1, 2, 1],
+    [1, 1, 2, 1],
+    [1, -1, 2, 1],
     [1, -1, 0, 1]]);
     print(f"\nWorld Coordinates = \n{world_coordinates}\n");
-
-
-    # xyz = np.matmul(P_matrix, world_coordinates.transpose());
-    #
-    # xy_p = np.array([xyz[0], xyz[1]]) / xyz[2];
-    #
-    # r_sq = xy_p[0]*xy_p[0] + xy_p[1]*xy_p[1];
-    #
-    # xy_pp = xy_p * (1+distCoeffs[0]*pow(r_sq,2)+distCoeffs[1]*pow(r_sq,4)+distCoeffs[2]*pow(r_sq,6))/(1+distCoeffs[3]*pow(r_sq,2))
-    #
-    # xy_pp = np.append(xy_pp,1);
-    #
-    # image_coordinates = np.array([np.matmul(K,xy_pp)]);
 
     image_coordinates = np.matmul(P_matrix, world_coordinates.transpose()).transpose();
 
@@ -99,8 +86,8 @@ def main():
     ax.imshow(im);
 
     ax.scatter(tag_corners[:,0], tag_corners[:,1], color='red');
-    # ax.scatter(image_coordinates[:,0], image_coordinates[:,1], color='green');
 
+    # draw cube lines based on image coordinates of corners
     for i in range(0,4):
         for j in range(0,3):
             x = [];
