@@ -80,11 +80,14 @@ The results are slightly different from the first calibration image. The second 
 Moreover, I think discrepancies result from my hand drawn lines and vanishing points in Task 2. While it's sort of "comforting" to do things yourself step by step, I also think doing things by hand may be more susceptible to errors. Though I use Illustrator software, my results in Task 2 may be very sensitive to where I visually estimate the 3D parallel lines to be, subsequently propagating error into vanishing point coordinates and calibration calculations.
 
 
+## Task 4
+pyAprilTag.find() doesn't seem to work with large image files (4032px). So Task 4 involves drawing on a 1600px by 1200px photo. Task 3 code was used to re-evaluate calibration at the same focal length on an image of the same size.
+
 ## Task 5
 
 Using RANSAC, the best fit plane for the given point cloud data found had the following properties:
- - Normal: [0.1029,0.8016,0.5889]
- - Point: [0.022,0.0157,0.8601
+ - Normal: [0.1029, 0.8016, 0.5889]
+ - Point: [0.022, 0.0157, 0.8601]
  - Consensus Score: 221668
 
 This was found using the following RANSAC properties:
