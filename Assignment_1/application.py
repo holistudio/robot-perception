@@ -10,12 +10,9 @@ from PIL import Image
 import cv2
 import pyAprilTag
 
-# Calibration Matrix from Task 3
-# AprilCalib log 2
-# CalibRig::mode=2d
-# @ Sun Nov  3 21:18:57 2019
 
 def main():
+    # Calibration Matrix from Task 3
     K=np.array([[3.14072514e+03, 0.00000000e+00, 2.01964606e+03],
      [0.00000000e+00, 3.14336567e+03, 1.48452385e+03],
      [0.00000000e+00, 0.00000000e+00, 1.00000000e+00]]);
@@ -32,10 +29,6 @@ def main():
     tag_corners = corners[0];
     print(f"\nCorner Image Coordinates = \n{tag_corners}\n");
 
-    # corner_0 = tag_corners[0];
-    # corner_0 = np.append(corner_0,1);
-    # corner_0_w = np.matmul(LA.inv(H_matrix),np.array(corner_0))
-    # print(corner_0_w/corner_0_w[2])
     A_matrix = np.matmul(LA.inv(K), H_matrix);
 
     a1_n = LA.norm(A_matrix[:,0])
@@ -51,6 +44,7 @@ def main():
 
     tr = A_matrix[:,2];
     tr = tr / a1_n;
+
     print(f"\nTranslation = \n{tr}\n");
 
     R_matrix = np.array([r1,r2,r3]).transpose();
@@ -61,7 +55,6 @@ def main():
     print(f"\nExtrinsics [ R | t ] = \n{P_matrix}\n");
 
     P_matrix = np.matmul(K,P_matrix);
-
     print(f"\nCamera Matrix K * [ R | t ] = \n{P_matrix}\n");
 
     world_coordinates = np.array([[1, 1, 0, 1],
