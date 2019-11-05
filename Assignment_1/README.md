@@ -81,14 +81,28 @@ Moreover, I think discrepancies result from my hand drawn lines and vanishing po
 
 
 ## Task 4
-pyAprilTag.find() doesn't seem to work with large image files (4032px). So Task 4 involves drawing on a 1600px by 1200px photo. Task 3 code was used to re-evaluate calibration at the same focal length on an image of the same size.
+pyAprilTag.find() doesn't seem to work with large image files (4032px). So Task 4 involves drawing on a 1600px by 1200px photo. Task 3 code was used to re-evaluate calibration at the same focal length on an image of the same size (iPhone camera app can allow for manual focus).
+
+Calibration images:
+
+<img src="img/task_3/Task3_03.png" width="250"/> <img src="img/task_3/calib_03.png" width="250"/>
+
+K matrix:
+```
+[[1.17136545e+03, 0.00000000e+00, 8.01203424e+02],
+  [0.00000000e+00, 1.17497866e+03, 5.38637778e+02],
+  [0.00000000e+00, 0.00000000e+00, 1.00000000e+00]]
+```
+
+Photo of AprilTag with Cube:
+
+<img src="img/task_4/Task4_Result.png" width="400"/>
 
 ## Task 5
 
-Using RANSAC, the best fit plane for the given point cloud data found had the following properties:
- - Normal: [0.1029, 0.8016, 0.5889]
- - Point: [0.022, 0.0157, 0.8601]
- - Consensus Score: 221668
+Using RANSAC, the best fit plane for the given point cloud data found is shown below:
+
+<img src="img/task_5/trial_1_best-01.png" width="400"/>
 
 This was found using the following RANSAC properties:
  - Number of Trials: 3
@@ -97,11 +111,13 @@ This was found using the following RANSAC properties:
 
 A threshold score of 80% of total points (217586) was found to be best for finding a plane quickly. Any higher threshold took much longer to "converge."
 
-The following are visualizations of the trial results and final plane model result:
+The following are visualizations of the trial results:
 
-TODO: Add images here with description of normal vectors, etc.
+<img src="img/task_5/trial_group-01.png" width="600"/>
 
-Output from Task 5 code can be found below:
+As indicated in bold in the figure above, Trial 1 had the best score and it's consensus and sample sets were combined to find the final plane model shown in the previous figure.
+
+Terminal output from Task 5 code can be found below:
 ```
 geometry::PointCloud with 271983 points.
 Threshold Score: 217586
