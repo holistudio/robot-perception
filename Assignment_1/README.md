@@ -81,22 +81,31 @@ Moreover, I think discrepancies result from my hand drawn lines and vanishing po
 
 
 ## Task 4
-pyAprilTag.find() doesn't seem to work with large image files (4032px). So Task 4 involves drawing on a 1600px by 1200px photo. Task 3 code was used to re-evaluate calibration at the same focal length on an image of the same size (iPhone camera app can allow for manual focus).
+pyAprilTag.find() doesn't seem to work with large image files (4032px x 3024px). So for Task 4, photos taken from the iPhone were resized to 1600px by 1200px. Also knowing from Task 3 that the iPhone's autofocus had an effect on the calibration, an iPhone camera app was used to turn off the camera's auto focus. A calibration image was retaken and calibration matrix recalculated.
 
 Calibration images:
 
 <img src="img/task_3/Task3_03.png" width="250"/> <img src="img/task_3/calib_03.png" width="250"/>
 
-K matrix:
+Calibration matrix:
 ```
-[[1.17136545e+03, 0.00000000e+00, 8.01203424e+02],
+[ [1.17136545e+03, 0.00000000e+00, 8.01203424e+02],
   [0.00000000e+00, 1.17497866e+03, 5.38637778e+02],
   [0.00000000e+00, 0.00000000e+00, 1.00000000e+00]]
 ```
+With manual focus kept at the same focal length, a photo was taken of an AprilTag. Both AprilTag image and calibration image were of size 1600px by 1200px.
 
-Photo of AprilTag with Cube:
+Once the full 3D perspective projection matrix was calculated, world coordinates of the cube's corners could be transformed into corresponding image coordinates. Lines can then be drawn to form the 3D cube on the image.
 
-<img src="img/task_4/Task4_Result.png" width="400"/>
+<img src="img/task_4/Task4_Result03.png" width="400"/>
+
+Other angles can be taken as well:
+
+<img src="img/task_4/Task4_Result02.png" width="400"/>
+
+<img src="img/task_4/Task4_Result04.png" width="400"/>
+
+(note: these are taken at different focal length, but use the same K matrix as above. Technically this means the cubes' are somewhat "incorrect" but the errors are not very noticeable)
 
 ## Task 5
 
