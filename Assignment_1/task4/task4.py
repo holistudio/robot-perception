@@ -20,7 +20,7 @@ def main():
     print(f"\nK = \n{K}\n");
 
     # detect AprilTag pattern and homography matrix, Hs
-    image_path = '../img/task_4/Task4_03.png';
+    image_path = 'Task4_03.png';
     img = cv2.imread(image_path, 0);
     ids, corners, centers, Hs = pyAprilTag.find(img);
 
