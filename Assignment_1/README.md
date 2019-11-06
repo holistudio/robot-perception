@@ -25,6 +25,8 @@ Code has been divided into project folders. So for task 'X', change directory to
 
 Noticing the URL in the image on the Assignment pdf, I realized that the message had something to do with color conversions.
 
+<img src="img/task_1/task1_clue.jpg" width="300"/>
+
 I actually first used Photoshop's Channel Mixer, Levels, and Curves to fiddle around with the image's color and contrast settings.
 
 
@@ -127,6 +129,68 @@ Other angles can be taken as well:
 <img src="img/task_4/Task4_Result04.png" width="400"/>
 
 (note: these are taken at different focal length, but use the same K matrix as above. Technically this means the cubes' are somewhat "incorrect" but the errors are not very noticeable)
+
+Example output for Task 4 code:
+```
+K =
+[[1.17136545e+03 0.00000000e+00 8.01203424e+02]
+ [0.00000000e+00 1.17497866e+03 5.38637778e+02]
+ [0.00000000e+00 0.00000000e+00 1.00000000e+00]]
+
+H =
+[[ 1.37289126e+02 -5.25032240e+01  7.73175264e+02]
+ [-1.66553793e+01 -1.43641780e+02  5.50344233e+02]
+ [ 5.93427257e-02 -4.91402615e-02  9.80901409e-01]]
+
+Corner Image Coordinates =
+[[709.16875496 732.09247473]
+ [883.95576143 621.75540286]
+ [865.66220625 393.54812803]
+ [668.6962352  485.26924922]]
+
+A = K^-1 * H =
+[[ 0.07661446 -0.01121074 -0.0108645 ]
+ [-0.04137915 -0.0997235   0.01871836]
+ [ 0.05934273 -0.04914026  0.98090141]]
+
+Translation =
+[-0.10310473  0.1776383   9.30880808]
+
+R Matrix =
+[[ 0.72707541 -0.10639057  0.71609828]
+ [-0.39269036 -0.94638143  0.27915157]
+ [ 0.56316572 -0.46634377 -0.72986922]]
+
+Extrinsics [ R | t ] =
+[[ 0.72707541 -0.10639057  0.71609828 -0.10310473]
+ [-0.39269036 -0.94638143  0.27915157  0.1776383 ]
+ [ 0.56316572 -0.46634377 -0.72986922  9.30880808]]
+
+Camera Matrix K * [ R | t ] =
+[[ 1.30288132e+03 -4.98258470e+02  2.54039063e+02  7.33747559e+03]
+ [-1.58060461e+02 -1.36316836e+03 -6.51380021e+01  5.22279691e+03]
+ [ 5.63165717e-01 -4.66343772e-01 -7.29869223e-01  9.30880808e+00]]
+
+World Coordinates =
+[[ 1  1  0  1]
+ [-1  1  0  1]
+ [-1 -1  0  1]
+ [-1 -1  2  1]
+ [-1  1  2  1]
+ [ 1  1  2  1]
+ [ 1 -1  2  1]
+ [ 1 -1  0  1]]
+
+Image Coordinates =
+[[8.65662206e+02 3.93548128e+02 1.00000000e+00]
+ [6.68696235e+02 4.85269249e+02 1.00000000e+00]
+ [7.09168755e+02 7.32092475e+02 1.00000000e+00]
+ [9.08243795e+02 8.53139630e+02 1.00000000e+00]
+ [8.86334865e+02 5.70038672e+02 1.00000000e+00]
+ [1.08863511e+03 4.49451399e+02 1.00000000e+00]
+ [1.08651321e+03 7.09305928e+02 1.00000000e+00]
+ [8.83955761e+02 6.21755403e+02 1.00000000e+00]]
+```
 
 ## Task 5
 
