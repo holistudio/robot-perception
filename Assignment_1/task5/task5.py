@@ -168,7 +168,7 @@ def fit_points_to_plane(points):
 
 def main():
     # load point cloud data points
-    pcd = o3d.io.read_point_cloud("../data/record_00348.pcd");
+    pcd = o3d.io.read_point_cloud("record_00348.pcd");
     print(pcd); #271983
     points_array = np.asarray(pcd.points);
     # o3d.visualization.draw_geometries([pcd])

@@ -19,7 +19,7 @@ pyAprilTag can then be installed with these [instructions](https://gist.github.c
 Other packages used can be installed using pip and the requirements.txt file (type `pip install requirements.txt`)
 
 ### Task Folder Structure
-Code has been divided into project folders. So for task 'X', change directory to the corresponding folder, then run `python task_X.py`
+Code has been divided into project folders. So for task 'X', change directory to 'taskX', then run `python taskX.py`
 
 ## Task 1
 
@@ -32,7 +32,7 @@ I actually first used Photoshop's Channel Mixer, Levels, and Curves to fiddle ar
 
 <img src="img/task_1/for_watson_photoshop.png" width="500"/>
 
-Then I used opencv/numpy/PIL/matplotlib python libraries to "do the same thing with code." Task 1's code is in the task_1 folder. Results are below:
+Then I used opencv/numpy/PIL/matplotlib python libraries to "do the same thing with code." Task 1's code is in the task1 folder. Results are below:
 
 <img src="img/task_1/Task1.png" width="500"/>
 
@@ -48,7 +48,7 @@ The above image (4032px by 3024px) was used for task 2. Vanishing points and the
 
 Of note is the fact that the principal point (1965, 1488) is roughly equal to the center of the image (2016, 1512).
 
-These coordinates were then fed into the focal length formula derived in class for three vanishing points (see task_2/task_2.py code).
+These coordinates were then fed into the focal length formula derived in class for three vanishing points (see task2/task2.py code).
 
 <img src="img/task_2/focal_length_formula.png" width="400"/>
 
@@ -103,7 +103,7 @@ The results are slightly different from the first calibration image. The second 
 
 Moreover, I think discrepancies result from my hand drawn lines and vanishing points in Task 2. While it's sort of "comforting" to do things yourself step by step, I also think doing things by hand may be more susceptible to errors. Though I use Illustrator software, my results in Task 2 may be very sensitive to where I visually estimate the 3D parallel lines to be, subsequently propagating error into vanishing point coordinates and calibration calculations.
 
-A modified demo_calib_by_photo script is in the task_3 folder, which calculates calibration matrices using photos in the current working directory rather than pyAprilTag's default.
+A modified demo_calib_by_photo script is in the task3 folder, which calculates calibration matrices using photos in the current working directory rather than pyAprilTag's default.
 
 ## Task 4
 pyAprilTag.find() doesn't seem to work with large image files (4032px x 3024px). So for Task 4, photos taken from the iPhone were resized to 1600px by 1200px. Also knowing from Task 3 that the iPhone's autofocus had an effect on the calibration, an iPhone camera app was used to turn off the camera's auto focus. A calibration image was retaken and calibration matrix recalculated.

@@ -7,7 +7,7 @@ from PIL import Image
 
 
 def main():
-    img = cv.imread('../data/for_watson.png',0);
+    img = cv.imread('for_watson.png',0);
 
     # display image in grayscale
     # cv.imshow('image',img);
