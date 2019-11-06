@@ -1,6 +1,6 @@
 # Assignment 1 Documentation
 
-## Code Compilation/Run
+## Code Compilation/Run Instructions
 
 ### Packages/Environments
 
@@ -27,7 +27,7 @@ Noticing the URL in the image on the Assignment pdf, I realized that the message
 
 <img src="img/task_1/task1_clue.jpg" width="300"/>
 
-I actually first used Photoshop's Channel Mixer, Levels, and Curves to fiddle around with the image's color and contrast settings.
+I actually first used Photoshop's Channel Mixer, Levels, and Curves to fiddle around with the image's color and contrast settings. In particular, Photoshop's Channel Mixer does the color to grayscale conversions discussed in class through a slider based GUI.
 
 
 <img src="img/task_1/for_watson_photoshop.png" width="500"/>
@@ -73,7 +73,8 @@ Using the same iPhone, I took a photo of the AprilTag calibration image:
 
 <img src="img/task_3/Task3_00.png" width="250"/> <img src="img/task_3/calib_00.png" width="250"/>
 
-and obtained the following calibration matrix:
+and obtained the following calibration matrix using pyAprilTag's demo_calib_by_photo.py script:
+
 ```
 camera intrinsic matrix:
 [[3.21246201e+03 0.00000000e+00 2.03445914e+03]
@@ -84,7 +85,7 @@ camera distortion parameters:
   0.00000000e+00]
 ```
 
-Pretty close to what I got by hand in Task 2! Of course I didn't get any distortion parameters. Noticing that one of the AprilTags wasn't recognized in the above image, I took a second one and reran the demo_calib_by_photo script:
+Pretty close to what I got by hand in Task 2! Of course I didn't get any distortion parameters in Task 2. Noticing that one of the AprilTags wasn't recognized in the above calibration image, I took a second photo and reran the demo_calib_by_photo script:
 
 <img src="img/task_3/Task3_01.png" width="250"/> <img src="img/task_3/calib_01.png" width="250"/>
 
@@ -98,10 +99,11 @@ camera distortion parameters:
   0.00000000e+00]
 ```
 
-The results are slightly different from the first calibration image. The second calibration may be the most accurate, since the estimated principal point is closer to the center of the image (2016px, 1512px). I also highly suspect differences may result from the iPhone's autofocus, which would vary the focal length between images outside of my own control. I purposely tried to stand farther back in the second calibration image, hoping to get something closer to my own image in Task 2 where I also stood far away from the object.
+The results are slightly different from the first calibration image. The second calibration may be the most accurate, since the estimated principal point is closer to the center of the image (2016px, 1512px). I also highly suspect differences may result from the iPhone's autofocus, which would vary the focal length between images. I purposely tried to stand farther back in the second calibration image, hoping to get something closer to my own image in Task 2 where I also stood far away from the object.
 
 Moreover, I think discrepancies result from my hand drawn lines and vanishing points in Task 2. While it's sort of "comforting" to do things yourself step by step, I also think doing things by hand may be more susceptible to errors. Though I use Illustrator software, my results in Task 2 may be very sensitive to where I visually estimate the 3D parallel lines to be, subsequently propagating error into vanishing point coordinates and calibration calculations.
 
+A modified demo_calib_by_photo script is in the task_3 folder, which calculates calibration matrices using photos in the current working directory rather than pyAprilTag's default.
 
 ## Task 4
 pyAprilTag.find() doesn't seem to work with large image files (4032px x 3024px). So for Task 4, photos taken from the iPhone were resized to 1600px by 1200px. Also knowing from Task 3 that the iPhone's autofocus had an effect on the calibration, an iPhone camera app was used to turn off the camera's auto focus. A calibration image was retaken and calibration matrix recalculated.
@@ -128,7 +130,7 @@ Other angles can be taken as well:
 
 <img src="img/task_4/Task4_Result04.png" width="400"/>
 
-(note: these are taken at different focal length, but use the same K matrix as above. Technically this means the cubes' are somewhat "incorrect" but the errors are not very noticeable)
+(note: these last 2 images are taken at different focal length, but use the same K matrix as above. Technically this means the cubes are "incorrectly projected" but the errors are not very noticeable)
 
 Example output for Task 4 code:
 ```
@@ -194,7 +196,7 @@ Image Coordinates =
 
 ## Task 5
 
-Using RANSAC, the best fit plane found for the given point cloud data is shown below:
+Using RANSAC, the best fit plane found for the given point cloud data (data/record_00348.pcd) is shown below:
 
 <img src="img/task_5/trial_1_best-01.png" width="400"/>
 
