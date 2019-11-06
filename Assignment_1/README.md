@@ -1,5 +1,26 @@
 # Assignment 1 Documentation
 
+## Code Compilation/Run
+
+### Packages/Environments
+
+Tasks 3 and 4 make use of pyAprilTag, which seems to only be usable in Anaconda prompt with the following Anaconda environment setup:
+
+```
+conda create --name opencv_py37 python=3.7 numpy matplotlib cython
+conda activate opencv_py37
+conda install -c conda-forge opencv=3.4.7
+```
+
+Once the above environment is activated, the directory can be changed back to this assignment's within Anaconda Prompt.
+
+pyAprilTag can then be installed with these [instructions](https://gist.github.com/simbaforrest/ed0447c66f6e97b66d0850645c0b1266#file-apriltag-demo-md).
+
+Other packages used can be installed using pip and the requirements.txt file (type `pip install requirements.txt`)
+
+### Task Folder Structure
+Code has been divided into project folders. So for task 'X', change directory to the corresponding folder, then run `python task_X.py`
+
 ## Task 1
 
 Noticing the URL in the image on the Assignment pdf, I realized that the message had something to do with color conversions.
@@ -109,11 +130,11 @@ Other angles can be taken as well:
 
 ## Task 5
 
-Using RANSAC, the best fit plane for the given point cloud data found is shown below:
+Using RANSAC, the best fit plane found for the given point cloud data is shown below:
 
 <img src="img/task_5/trial_1_best-01.png" width="400"/>
 
-This was found using the following RANSAC properties:
+This was found using the following RANSAC parameters:
  - Number of Trials: 3
  - Score Threshold: 217586 (80% of total points)
  - Initial Sample Size: 5 points  
@@ -207,15 +228,3 @@ Final Plane: Plane(Normal: [0.1029,0.8016,0.5889], Point: [0.022,0.0157,0.8601])
 ```
 # References
 https://github.com/ai4ce/pyAprilTag
-
-Tasks 3 and 4 make use of pyAprilTag, which seems to only be usable in Anaconda prompt with the following conda environment setup:
-
-```
-conda create --name opencv_py37 python=3.7 numpy matplotlib cython
-conda activate opencv_py37
-conda install -c conda-forge opencv=3.4.7
-```
-
-Once the above environment is activated, the directory can be changed back to this assignment's within Anaconda Prompt.
-
-https://github.com/heremaps/pptk
