@@ -59,6 +59,13 @@ def main():
     stitcher = cv.createStitcher(args.mode)
     status, pano = stitcher.stitch(imgs)
 
+    # when all 41 images are used, the following error occurs:
+    # Can't stitch images, error code = 3
+    # This corresponds to ERR_CAMERA_PARAMS_ADJUST_FAIL
+
+    # when images 37-41 are only included for stitching, the following error occurs:
+    # cv2.error: OpenCV(3.4.2) C:\Miniconda3\conda-bld\opencv-suite_1534379934306\work\modules\imgproc\src\imgwarp.cpp:1728: error: (-215:Assertion failed) dst.cols < 32767 && dst.rows < 32767 && src.cols < 32767 && src.rows < 32767 in function 'cv::remap'
+
     if status != cv.Stitcher_OK:
         print("Can't stitch images, error code = %d" % status)
         sys.exit(-1)
