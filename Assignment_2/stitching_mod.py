@@ -2,12 +2,12 @@
 #!/usr/bin/env python
 
 '''
-Stitching sample
+Code based on opencv's stitching sample code
 ================
 https://github.com/opencv/opencv/blob/master/samples/python/stitching.py
 ================
-Show how to use Stitcher API from python in a simple way to stitch panoramas
-or scans.
+
+Please have all images in jpg format and in the same directory as the python file.
 '''
 
 # Python 2/3 compatibility
@@ -36,9 +36,12 @@ __doc__ += '\n' + parser.format_help()
 def main():
     args = parser.parse_args()
 
-    files = os.listdir('C:/Daniel/Documents/Grad School/NYU/robot-perception/Assignment_2/')
+    # get current working directory
+    cwd = os.getcwd();
+    files = os.listdir(cwd);
     # print(files);
 
+    # finds all jpg files
     img_files = [];
     for file in files:
         if file.find('.jpg') != -1:
